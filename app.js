@@ -335,10 +335,10 @@ class App {
         break;
 
       case STATES.COOLDOWN:
-        this.updateHUDState(STATES.COOLDOWN, "Resting (3s)");
+        this.updateHUDState(STATES.COOLDOWN, "Resting (2s)");
         this.cooldownTimer = setTimeout(() => {
           this.resetStage();
-        }, 3000);
+        }, 2000);
         break;
     }
   }
