@@ -1,0 +1,18 @@
+{
+  "name": "Magic Words - Animal Summoner",
+  "short_name": "Magic Words",
+  "description": "An interactive tilt-shift diorama experience to summon toy animals using magic words.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#818cf8",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "assets/boy_front.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

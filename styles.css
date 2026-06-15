@@ -1,0 +1,777 @@
+/* Global Resets & Styling Setup */
+:root {
+  --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  
+  /* HSL Color Palette (Bright, Nintendo Link's Awakening-like) */
+  --bg-gradient: linear-gradient(135deg, #a5b4fc 0%, #818cf8 50%, #6366f1 100%);
+  --sky-color: linear-gradient(to bottom, #7dd3fc 0%, #bae6fd 60%, #e0f2fe 100%);
+  --ground-color: radial-gradient(circle at center, #86efac 0%, #4ade80 70%, #22c55e 100%);
+  --pedestal-clay: #fca5a5;
+  --pedestal-rim: #ef4444;
+  --text-dark: #1e1b4b;
+  --text-light: #ffffff;
+  --accent-color: #f59e0b;
+  
+  /* Glassmorphism settings */
+  --glass-bg: rgba(255, 255, 255, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-blur: blur(20px);
+  --shadow-color: rgba(30, 27, 75, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--bg-gradient);
+  color: var(--text-dark);
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Ambient Glow in the background */
+.ambient-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  height: 90vh;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, rgba(255,255,255,0) 70%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Diorama Container */
+.diorama-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+/* Tilt-Shift Blur Panels */
+.tilt-shift-blur {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 18vh;
+  z-index: 10;
+  pointer-events: none;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.tilt-shift-blur.top {
+  top: 0;
+  background: linear-gradient(to bottom, rgba(130, 140, 250, 0.8) 0%, rgba(130, 140, 250, 0) 100%);
+  mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+}
+
+.tilt-shift-blur.bottom {
+  bottom: 0;
+  background: linear-gradient(to top, rgba(99, 102, 241, 0.8) 0%, rgba(99, 102, 241, 0) 100%);
+  mask-image: linear-gradient(to top, black 30%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, black 30%, transparent 100%);
+}
+
+/* Diorama 3D Stage */
+.diorama-stage {
+  position: relative;
+  width: 95vw;
+  max-width: 1024px;
+  height: 75vh;
+  max-height: 700px;
+  background: var(--sky-color);
+  border-radius: 40px;
+  overflow: hidden;
+  box-shadow: 
+    0 30px 60px rgba(0, 0, 0, 0.3),
+    inset 0 4px 20px rgba(255, 255, 255, 0.5);
+  border: 8px solid rgba(255, 255, 255, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+/* Sun and Clouds */
+.stage-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.sun {
+  position: absolute;
+  top: 40px;
+  left: 10%;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, #fef08a 20%, #f59e0b 100%);
+  border-radius: 50%;
+  box-shadow: 0 0 40px rgba(245, 158, 11, 0.4);
+  animation: floatSun 12s ease-in-out infinite alternate;
+}
+
+.clouds {
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  height: 100px;
+}
+
+.cloud {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 50px;
+  filter: blur(1px);
+}
+
+.cloud::before, .cloud::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+}
+
+.cloud.c1 {
+  width: 120px;
+  height: 40px;
+  top: 30px;
+  left: 60%;
+  animation: floatCloud 25s linear infinite;
+}
+.cloud.c1::before { width: 50px; height: 50px; top: -25px; left: 20px; }
+.cloud.c1::after { width: 40px; height: 40px; top: -15px; left: 60px; }
+
+.cloud.c2 {
+  width: 160px;
+  height: 50px;
+  top: 60px;
+  left: -200px;
+  animation: floatCloud 35s linear infinite 5s;
+}
+.cloud.c2::before { width: 70px; height: 70px; top: -35px; left: 30px; }
+.cloud.c2::after { width: 50px; height: 50px; top: -20px; left: 80px; }
+
+/* 3D Ground */
+.stage-ground {
+  position: absolute;
+  bottom: -50px;
+  left: -10%;
+  width: 120%;
+  height: 55%;
+  background: var(--ground-color);
+  transform: rotateX(60deg);
+  transform-origin: bottom center;
+  box-shadow: inset 0 20px 40px rgba(0,0,0,0.15);
+  border-top: 12px solid #a3e635; /* grass border highlight */
+  z-index: 2;
+}
+
+.path-details {
+  position: absolute;
+  top: 10%;
+  left: 20%;
+  width: 60%;
+  height: 80%;
+  background: radial-gradient(ellipse at center, rgba(254, 240, 138, 0.25) 0%, rgba(0,0,0,0) 75%);
+}
+
+/* Pedestals Configuration */
+.pedestals-container {
+  position: absolute;
+  bottom: 12%;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  padding: 0 10%;
+  z-index: 3;
+  transform-style: preserve-3d;
+}
+
+.pedestal-wrapper {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  transform-style: preserve-3d;
+}
+
+.pedestal {
+  position: absolute;
+  border-radius: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.pedestal.shadow {
+  bottom: -10px;
+  width: 180px;
+  height: 45px;
+  background: rgba(0, 0, 0, 0.25);
+  filter: blur(10px);
+  z-index: 1;
+}
+
+.pedestal.body {
+  bottom: 0px;
+  width: 160px;
+  height: 40px;
+  background: radial-gradient(ellipse at top, var(--pedestal-clay) 0%, var(--pedestal-rim) 100%);
+  border: 4px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 10px 15px rgba(0, 0, 0, 0.2),
+    inset 0 2px 5px rgba(255, 255, 255, 0.5);
+  z-index: 2;
+}
+
+/* Characters Rendering */
+.character-container {
+  position: absolute;
+  bottom: 25px; /* rest slightly on top of pedestal */
+  width: 180px;
+  height: 180px;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+/* Idle float animation for figurines */
+#boy-char {
+  animation: idleFloat 4s ease-in-out infinite;
+}
+
+#animal-char {
+  animation: idleFloat 4.2s ease-in-out infinite;
+}
+
+.char-img {
+  width: auto;
+  height: 100%;
+  max-width: 180px;
+  object-fit: contain;
+  display: none;
+  filter: drop-shadow(0 15px 10px rgba(0, 0, 0, 0.3));
+}
+
+.char-img.active {
+  display: block;
+}
+
+/* Animating Wand tip coordinate */
+#wand-tip {
+  position: absolute;
+  top: 40%;
+  right: 15%;
+  width: 1px;
+  height: 1px;
+}
+
+/* Animal styling and entry animations */
+.animal-img {
+  width: auto;
+  height: 100%;
+  max-width: 160px;
+  object-fit: contain;
+  display: none;
+  filter: drop-shadow(0 15px 10px rgba(0, 0, 0, 0.35));
+}
+
+/* Animation triggered dynamically by JS */
+.animal-img.summon-pop {
+  display: block;
+  animation: summonPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animal-img.active {
+  display: block;
+}
+
+.animal-img.dismiss-pop {
+  display: block;
+  animation: dismissPop 0.5s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
+}
+
+/* Speech Bubble structure */
+.speech-bubble {
+  position: absolute;
+  top: -85px;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  background: rgba(255, 255, 255, 0.95);
+  border: 3px solid var(--text-dark);
+  border-radius: 24px;
+  padding: 12px 24px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  z-index: 12;
+  white-space: nowrap;
+  transform-origin: bottom center;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.speech-bubble.active {
+  transform: translateX(-50%) scale(1);
+}
+
+.speech-text {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  letter-spacing: 0.5px;
+}
+
+.speech-arrow {
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 12px solid var(--text-dark);
+}
+
+.speech-arrow::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: -8px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 10px solid white;
+}
+
+/* Canvas for magic particles */
+#particle-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* Overlay UI Heads-Up Display */
+.hud-header {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  right: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.hud-title {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-radius: 20px;
+  padding: 12px 24px;
+  box-shadow: 0 8px 32px var(--shadow-color);
+}
+
+.hud-title h1 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text-dark);
+  text-transform: uppercase;
+}
+
+.hud-title p {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #4f46e5;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Mic Status Button HUD */
+.mic-status-container {
+  pointer-events: auto;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-radius: 24px;
+  padding: 10px 20px;
+  box-shadow: 0 8px 32px var(--shadow-color);
+  transition: all 0.3s ease;
+}
+
+.mic-status-container:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.status-indicator {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  transition: background-color 0.3s;
+}
+
+/* Active listening pulse */
+.mic-status-container.listening .status-indicator {
+  background: #22c55e;
+  animation: pulseGreen 1.5s infinite;
+}
+
+/* Cooldown style */
+.mic-status-container.cooldown .status-indicator {
+  background: #f59e0b;
+}
+
+/* Error state */
+.mic-status-container.error .status-indicator {
+  background: #ef4444;
+}
+
+.status-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+/* Real-Time Speech Feed Overlay */
+.speech-feed {
+  position: absolute;
+  bottom: 24px;
+  width: 90%;
+  max-width: 500px;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.speech-feed-bubble {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-radius: 20px;
+  padding: 12px 24px;
+  box-shadow: 0 8px 32px var(--shadow-color);
+  color: var(--text-dark);
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  width: 100%;
+}
+
+.speech-feed-bubble.recognized {
+  color: #4f46e5;
+  font-weight: 800;
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+/* Setup/Welcome Overlay */
+.setup-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.7);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  transition: opacity 0.5s ease;
+}
+
+.setup-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.glassmorphism-card {
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 32px;
+  padding: 40px;
+  width: 90%;
+  max-width: 480px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.magic-wand-icon {
+  font-size: 4rem;
+  margin-bottom: 15px;
+  animation: swingWand 2s ease-in-out infinite alternate;
+}
+
+.glassmorphism-card h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin-bottom: 10px;
+}
+
+.glassmorphism-card p {
+  font-size: 1rem;
+  color: #4b5563;
+  line-height: 1.5;
+  margin-bottom: 25px;
+}
+
+.instructions-card {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  padding: 20px;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 30px;
+}
+
+.instructions-card h3 {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.instructions-card ul {
+  list-style-type: none;
+}
+
+.instructions-card li {
+  font-size: 0.9rem;
+  color: #374151;
+  margin-bottom: 8px;
+  padding-left: 15px;
+  position: relative;
+}
+
+.instructions-card li::before {
+  content: '✦';
+  position: absolute;
+  left: 0;
+  color: #6366f1;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+  border: none;
+  outline: none;
+  padding: 16px 36px;
+  border-radius: 24px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 
+    0 10px 20px rgba(79, 70, 229, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.4);
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 15px 25px rgba(79, 70, 229, 0.4),
+    inset 0 2px 4px rgba(255, 255, 255, 0.4);
+}
+
+.primary-btn:active {
+  transform: translateY(1px);
+  box-shadow: 
+    0 5px 10px rgba(79, 70, 229, 0.3);
+}
+
+/* Animations declarations */
+
+@keyframes floatSun {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-15px); }
+}
+
+@keyframes floatCloud {
+  0% { transform: translateX(-150px); }
+  100% { transform: translateX(110vw); }
+}
+
+@keyframes idleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes swingWand {
+  0% { transform: rotate(-10deg); }
+  100% { transform: rotate(15deg); }
+}
+
+@keyframes pulseGreen {
+  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+  70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+/* Pop/Scale in for animals */
+@keyframes summonPop {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(-45deg);
+  }
+  50% {
+    transform: scale(1.15) rotate(10deg);
+  }
+  75% {
+    transform: scale(0.95) rotate(-5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* Dissolve/Pop out for animals */
+@keyframes dismissPop {
+  0% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+  30% {
+    transform: scale(1.1) rotate(5deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0) rotate(-30deg);
+  }
+}
+
+/* Tablet / Landscape Layout adjustments */
+@media (max-width: 768px) {
+  .hud-title h1 {
+    font-size: 1.1rem;
+  }
+  .hud-title p {
+    font-size: 0.7rem;
+  }
+  .mic-status-container {
+    padding: 8px 16px;
+  }
+  .status-label {
+    font-size: 0.8rem;
+  }
+  .diorama-stage {
+    height: 65vh;
+  }
+  .pedestal-wrapper {
+    width: 140px;
+    height: 140px;
+  }
+  .pedestal.body {
+    width: 120px;
+    height: 30px;
+  }
+  .pedestal.shadow {
+    width: 130px;
+    height: 35px;
+  }
+  .character-container {
+    width: 130px;
+    height: 130px;
+  }
+  .animal-img, .char-img {
+    max-width: 120px;
+  }
+  .speech-bubble {
+    top: -70px;
+    padding: 8px 16px;
+  }
+  .speech-text {
+    font-size: 1rem;
+  }
+}
+
+/* Portrait Mobile styling */
+@media (max-width: 480px) {
+  .diorama-stage {
+    height: 55vh;
+    border-radius: 24px;
+    border-width: 4px;
+  }
+  .pedestals-container {
+    flex-direction: column;
+    align-items: center;
+    bottom: 8%;
+    gap: 40px;
+  }
+  .pedestal-wrapper {
+    width: 120px;
+    height: 100px;
+  }
+  .pedestal.body {
+    width: 110px;
+    height: 25px;
+  }
+  .pedestal.shadow {
+    width: 110px;
+    height: 25px;
+  }
+  .character-container {
+    width: 100px;
+    height: 100px;
+  }
+  .animal-img, .char-img {
+    max-width: 90px;
+  }
+  .speech-bubble {
+    top: -60px;
+  }
+}

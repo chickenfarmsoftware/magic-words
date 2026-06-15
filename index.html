@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Magic Words - Animal Summoner</title>
+  <!-- Google Fonts: Outfit (modern, rounded, friendly) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <!-- PWA Support -->
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+
+  <!-- Background Ambient Glow -->
+  <div class="ambient-glow"></div>
+
+  <!-- Main Diorama Scene -->
+  <main class="diorama-container">
+    <!-- Blur Overlays for Tilt-Shift Effect -->
+    <div class="tilt-shift-blur top"></div>
+    <div class="tilt-shift-blur bottom"></div>
+
+    <div class="diorama-stage">
+      <!-- Sky and Horizon -->
+      <div class="stage-background">
+        <div class="sun"></div>
+        <div class="clouds">
+          <div class="cloud c1"></div>
+          <div class="cloud c2"></div>
+        </div>
+      </div>
+
+      <!-- Ground / Floor -->
+      <div class="stage-ground">
+        <div class="path-details"></div>
+      </div>
+
+      <!-- Pedestals -->
+      <div class="pedestals-container">
+        <!-- Boy Pedestal -->
+        <div class="pedestal-wrapper boy-wrapper">
+          <div class="pedestal shadow"></div>
+          <div class="pedestal body"></div>
+          
+          <!-- Character: Boy -->
+          <div class="character-container" id="boy-char">
+            <img src="assets/boy_front.png" alt="Boy Front" class="char-img active" id="boy-front">
+            <img src="assets/boy_action.png" alt="Boy Action" class="char-img" id="boy-action">
+            <!-- Wand Sparkle Source Point -->
+            <div id="wand-tip"></div>
+          </div>
+
+          <!-- Boy Speech Bubble -->
+          <div class="speech-bubble" id="speech-bubble">
+            <span class="speech-text" id="speech-text">Abracadabra!</span>
+            <div class="speech-arrow"></div>
+          </div>
+        </div>
+
+        <!-- Animal Pedestal -->
+        <div class="pedestal-wrapper animal-wrapper">
+          <div class="pedestal shadow"></div>
+          <div class="pedestal body"></div>
+
+          <!-- Summoned Animal Container -->
+          <div class="character-container" id="animal-char">
+            <!-- Preloaded animals, toggled by JS classes -->
+            <img src="assets/animal_cat.png" alt="Cat" class="animal-img" id="animal-cat">
+            <img src="assets/animal_dog.png" alt="Dog" class="animal-img" id="animal-dog">
+            <img src="assets/animal_rabbit.png" alt="Rabbit" class="animal-img" id="animal-rabbit">
+            <img src="assets/animal_dragon.png" alt="Dragon" class="animal-img" id="animal-dragon">
+            <img src="assets/animal_lion.png" alt="Lion" class="animal-img" id="animal-lion">
+          </div>
+        </div>
+      </div>
+
+      <!-- Particle System Canvas -->
+      <canvas id="particle-canvas"></canvas>
+    </div>
+  </main>
+
+  <!-- Overlay UI HUD -->
+  <header class="hud-header">
+    <div class="hud-title">
+      <h1>Magic Words</h1>
+      <p>Animal Summoner</p>
+    </div>
+    <div class="mic-status-container" id="mic-btn">
+      <div class="status-indicator" id="status-light"></div>
+      <span class="status-label" id="status-label">Initializing...</span>
+    </div>
+  </header>
+
+  <!-- Prompt Overlay (Required to unlock browser Mic & Speech APIs) -->
+  <div class="setup-overlay" id="setup-overlay">
+    <div class="card glassmorphism-card">
+      <div class="magic-wand-icon">✨</div>
+      <h2>Awaken the Magic</h2>
+      <p>This interactive experience uses your iPad's microphone to summon cute toys with magic words.</p>
+      
+      <div class="instructions-card">
+        <h3>How to Play:</h3>
+        <ul>
+          <li>Tap the button below to start.</li>
+          <li>Say an animal name: <strong>"Cat", "Dog", "Rabbit", "Dragon", or "Lion"</strong>.</li>
+          <li>Watch the boy turn, wave his wand, and summon the toy!</li>
+        </ul>
+      </div>
+
+      <button class="primary-btn" id="start-btn">
+        <span>Allow Mic & Start</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Sub-HUD Overlay for Speech Feed -->
+  <div class="speech-feed" id="speech-feed">
+    <div class="speech-feed-bubble">
+      Say an animal name...
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="particles.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
