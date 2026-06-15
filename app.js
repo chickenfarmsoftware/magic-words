@@ -17,43 +17,19 @@ class App {
     this.currentAnimal = null;
     this.cooldownTimer = null;
 
-    // Supported animal keywords mapping to their internal keys
+    // Supported animal keywords mapping to their internal keys (including common toddler pronunciations)
     this.supportedAnimals = {
-      // Primary 3D Images
-      'cat': 'cat', 'kitten': 'cat',
-      'dog': 'dog', 'puppy': 'dog',
-      'rabbit': 'rabbit', 'bunny': 'rabbit',
-      'dragon': 'dragon',
-      'lion': 'lion',
-      'cow': 'cow',
-      
-      // Children's Books Animals (Tokens)
-      'bear': 'bear', 'panda': 'panda', 'koala': 'koala', 'tiger': 'tiger', 'leopard': 'leopard',
-      'cheetah': 'cheetah', 'zebra': 'zebra', 'gorilla': 'gorilla', 'monkey': 'monkey', 'chimpanzee': 'monkey',
-      'elephant': 'elephant', 'hippo': 'hippo', 'hippopotamus': 'hippo', 'rhino': 'rhino', 'rhinoceros': 'rhino',
-      'giraffe': 'giraffe', 'kangaroo': 'kangaroo', 'pig': 'pig', 'piglet': 'pig', 'sheep': 'sheep',
-      'lamb': 'sheep', 'goat': 'goat', 'horse': 'horse', 'foal': 'horse', 'donkey': 'donkey',
-      'deer': 'deer', 'fox': 'fox', 'wolf': 'wolf', 'squirrel': 'squirrel', 'hedgehog': 'hedgehog',
-      'beaver': 'beaver', 'mouse': 'mouse', 'rat': 'mouse', 'frog': 'frog', 'toad': 'frog',
-      'turtle': 'turtle', 'tortoise': 'turtle', 'snake': 'snake', 'crocodile': 'crocodile', 'alligator': 'crocodile',
-      'duck': 'duck', 'duckling': 'duck', 'chicken': 'chicken', 'rooster': 'chicken', 'owl': 'owl',
-      'bird': 'bird', 'parrot': 'parrot', 'eagle': 'eagle', 'penguin': 'penguin', 'whale': 'whale',
-      'dolphin': 'dolphin', 'shark': 'shark', 'octopus': 'octopus', 'crab': 'crab', 'lobster': 'crab',
-      'bee': 'bee', 'butterfly': 'butterfly', 'snail': 'snail', 'dinosaur': 'dinosaur', 'dino': 'dinosaur'
-    };
-
-    // Animal emojis for children's books
-    this.animalEmojis = {
-      'bear': '🐻', 'panda': '🐼', 'koala': '🐨', 'tiger': '🐯', 'leopard': '🐆',
-      'cheetah': '🐆', 'zebra': '🦓', 'gorilla': '🦍', 'monkey': '🐵', 'elephant': '🐘',
-      'hippo': '🦛', 'rhino': '🦏', 'giraffe': '🦒', 'kangaroo': '🦘', 'pig': '🐷',
-      'sheep': '🐑', 'goat': '🐐', 'horse': '🐴', 'donkey': '🫏', 'deer': '🦌',
-      'fox': '🦊', 'wolf': '🐺', 'squirrel': '🐿️', 'hedgehog': '🦔', 'beaver': '🦫',
-      'mouse': '🐭', 'frog': '🐸', 'turtle': '🐢', 'snake': '🐍', 'crocodile': '🐊',
-      'duck': '🦆', 'chicken': '🐔', 'owl': '🦉', 'bird': '🐦', 'parrot': '🦜',
-      'eagle': '🦅', 'penguin': '🐧', 'whale': '🐳', 'dolphin': '🐬', 'shark': '🦈',
-      'octopus': '🐙', 'crab': '🦀', 'bee': '🐝', 'butterfly': '🦋', 'snail': '🐌',
-      'dinosaur': '🦖'
+      'cat': 'cat', 'kitten': 'cat', 'kat': 'cat', 'tat': 'cat', 'cah': 'cat',
+      'dog': 'dog', 'puppy': 'dog', 'dah': 'dog', 'gog': 'dog', 'doggy': 'dog',
+      'rabbit': 'rabbit', 'bunny': 'rabbit', 'wabbit': 'rabbit', 'wabit': 'rabbit', 'labbit': 'rabbit', 'rabi': 'rabbit', 'bun': 'rabbit',
+      'dragon': 'dragon', 'dwagon': 'dragon', 'gagon': 'dragon', 'dagon': 'dragon', 'dagin': 'dragon',
+      'lion': 'lion', 'yion': 'lion', 'lili': 'lion', 'line': 'lion', 'lione': 'lion',
+      'cow': 'cow', 'caw': 'cow', 'coww': 'cow', 'mow': 'cow', 'moo': 'cow',
+      'horse': 'horse', 'hos': 'horse', 'hawse': 'horse', 'horsey': 'horse', 'hose': 'horse',
+      'pig': 'pig', 'piddy': 'pig', 'piggy': 'pig', 'pik': 'pig',
+      'bear': 'bear', 'beh': 'bear', 'bare': 'bear', 'behr': 'bear',
+      'sheep': 'sheep', 'seep': 'sheep', 'heep': 'sheep', 'shee': 'sheep', 'baa': 'sheep',
+      'elephant': 'elephant', 'elphant': 'elephant', 'efant': 'elephant', 'ellie': 'elephant', 'elpat': 'elephant', 'elph': 'elephant'
     };
 
     // Cache DOM Elements
@@ -77,13 +53,13 @@ class App {
       'rabbit': document.getElementById('animal-rabbit'),
       'dragon': document.getElementById('animal-dragon'),
       'lion': document.getElementById('animal-lion'),
-      'cow': document.getElementById('animal-cow')
+      'cow': document.getElementById('animal-cow'),
+      'horse': document.getElementById('animal-horse'),
+      'pig': document.getElementById('animal-pig'),
+      'bear': document.getElementById('animal-bear'),
+      'sheep': document.getElementById('animal-sheep'),
+      'elephant': document.getElementById('animal-elephant')
     };
-
-    // Toy Token Elements
-    this.toyToken = document.getElementById('toy-token');
-    this.tokenEmoji = document.getElementById('token-emoji');
-    this.tokenName = document.getElementById('token-name');
 
     this.initEvents();
   }
@@ -91,6 +67,28 @@ class App {
   initEvents() {
     this.startBtn.addEventListener('click', () => this.startMagic());
     this.micBtn.addEventListener('click', () => this.toggleListening());
+  }
+
+  // Calculate Levenshtein distance between two strings
+  levenshtein(s1, s2) {
+    if (s1.length < s2.length) {
+      return this.levenshtein(s2, s1);
+    }
+    if (s2.length === 0) {
+      return s1.length;
+    }
+    let previousRow = Array.from(Array(s2.length + 1).keys());
+    for (let i = 0; i < s1.length; i++) {
+      let currentRow = [i + 1];
+      for (let j = 0; j < s2.length; j++) {
+        let insertions = previousRow[j + 1] + 1;
+        let deletions = currentRow[j] + 1;
+        let substitutions = previousRow[j] + (s1[i] !== s2[j] ? 1 : 0);
+        currentRow.push(Math.min(insertions, deletions, substitutions));
+      }
+      previousRow = currentRow;
+    }
+    return previousRow[s2.length];
   }
 
   // Set up Audio Context for synthesizer sound effects
@@ -232,22 +230,54 @@ class App {
       }
 
       const currentSpeech = (finalTranscript || interimTranscript).toLowerCase().trim();
-      this.speechFeedBubble.innerText = currentSpeech || "Listening...";
-      this.speechFeedBubble.classList.remove('recognized');
+      if (!currentSpeech) return;
 
-      // Check if text matches any supported animals
+      // 1. Check for exact match or toddler phonetic match
+      let matchedAnimal = null;
+      let isExact = false;
+
       for (const keyword in this.supportedAnimals) {
         const regex = new RegExp(`\\b${keyword}\\b`, 'i');
         if (regex.test(currentSpeech)) {
-          const matchedKey = this.supportedAnimals[keyword];
-          const animalName = matchedKey;
-          
-          this.speechFeedBubble.innerText = `Summoning: ${animalName.toUpperCase()}!`;
-          this.speechFeedBubble.classList.add('recognized');
-          
-          this.handleAnimalTrigger(animalName);
+          matchedAnimal = this.supportedAnimals[keyword];
+          isExact = true;
           break;
         }
+      }
+
+      // 2. If no exact match, try fuzzy Levenshtein match on individual words
+      if (!matchedAnimal) {
+        const words = currentSpeech.split(/\s+/);
+        const coreAnimals = ['cat', 'dog', 'rabbit', 'lion', 'dragon', 'cow', 'horse', 'pig', 'bear', 'sheep', 'elephant'];
+        
+        for (const word of words) {
+          if (word.length < 2) continue; // skip single letter noise
+          
+          for (const target of coreAnimals) {
+            const distance = this.levenshtein(word, target);
+            
+            // Set threshold based on length
+            let threshold = 1;
+            if (target.length >= 6) threshold = 2; // rabbit, dragon, elephant can have distance of 2
+            
+            if (distance <= threshold) {
+              matchedAnimal = target;
+              break;
+            }
+          }
+          if (matchedAnimal) break;
+        }
+      }
+
+      // 3. If matched, update bubble and trigger summon, otherwise ignore completely
+      if (matchedAnimal) {
+        this.speechFeedBubble.classList.add('recognized');
+        if (isExact) {
+          this.speechFeedBubble.innerText = `Summoning: ${matchedAnimal.toUpperCase()}!`;
+        } else {
+          this.speechFeedBubble.innerText = `Best Guess: ${matchedAnimal.toUpperCase()}!`;
+        }
+        this.handleAnimalTrigger(matchedAnimal);
       }
     };
 
@@ -396,26 +426,14 @@ class App {
       this.playPoofSound();
       this.particles.createSummonExplosion(explosionX, explosionY);
 
-      // 5. Reveal animal or toy token
+      // 5. Reveal animal
       const animalEl = this.animalElements[this.currentAnimal];
       if (animalEl) {
         // Hide all other animal elements
         Object.values(this.animalElements).forEach(el => {
           el.className = "animal-img";
         });
-        this.toyToken.className = "toy-token"; // hide token
         animalEl.classList.add('summon-pop');
-      } else {
-        // Token Animal fallback
-        Object.values(this.animalElements).forEach(el => {
-          el.className = "animal-img";
-        });
-        
-        const emoji = this.animalEmojis[this.currentAnimal] || '❓';
-        this.tokenEmoji.innerText = emoji;
-        this.tokenName.innerText = this.currentAnimal;
-        
-        this.toyToken.className = "toy-token summon-pop";
       }
 
       // 6. Turn boy back to front view, hide bubble
@@ -457,27 +475,21 @@ class App {
     if (this.currentAnimal) {
       const animalEl = this.animalElements[this.currentAnimal];
       if (animalEl) {
-        // Primary animal image
         animalEl.classList.remove('summon-pop');
         animalEl.classList.add('dismiss-pop');
-      } else {
-        // Token animal
-        this.toyToken.classList.remove('summon-pop');
-        this.toyToken.classList.add('dismiss-pop');
-      }
-      
-      // Let dismissal animation finish
-      setTimeout(() => {
-        if (animalEl) {
+        
+        // Let dismissal animation finish
+        setTimeout(() => {
           animalEl.classList.remove('dismiss-pop');
-        } else {
-          this.toyToken.classList.remove('dismiss-pop');
-          this.toyToken.className = "toy-token";
-        }
+          this.currentAnimal = null;
+          this.state = STATES.RESET;
+          this.transitionTo(STATES.IDLE_WAITING);
+        }, 500);
+      } else {
         this.currentAnimal = null;
         this.state = STATES.RESET;
         this.transitionTo(STATES.IDLE_WAITING);
-      }, 500);
+      }
     } else {
       this.state = STATES.RESET;
       this.transitionTo(STATES.IDLE_WAITING);
