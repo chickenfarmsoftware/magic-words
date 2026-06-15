@@ -775,3 +775,120 @@ body {
     top: -60px;
   }
 }
+
+/* Dynamic 3D Magic Toy Token Styling */
+.toy-token {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fef08a 0%, #f59e0b 70%, #d97706 100%);
+  border: 6px solid #fffbeb;
+  box-shadow: 
+    0 10px 0 #b45309,
+    0 15px 20px rgba(0, 0, 0, 0.4),
+    inset 0 4px 10px rgba(255, 255, 255, 0.6);
+  display: none;
+  position: relative;
+  transform-style: preserve-3d;
+  filter: drop-shadow(0 15px 10px rgba(0, 0, 0, 0.35));
+  animation: idleFloat 4.2s ease-in-out infinite;
+}
+
+.toy-token.summon-pop {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  animation: tokenSummonPop 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.toy-token.active {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.toy-token.dismiss-pop {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  animation: tokenDismissPop 0.5s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
+}
+
+.token-rim {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  border: 3px dashed rgba(251, 191, 36, 0.8);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.token-face {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  transform: translateZ(5px);
+}
+
+.token-emoji {
+  font-size: 4.8rem;
+  line-height: 1;
+  margin-bottom: 2px;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
+}
+
+.token-name {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #78350f;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  background: rgba(255, 255, 255, 0.45);
+  padding: 2px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* Round the square border of character/animal images */
+.char-img, .animal-img {
+  border-radius: 28px;
+}
+
+@keyframes tokenSummonPop {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotateY(-540deg) translateY(0);
+  }
+  50% {
+    transform: scale(1.15) rotateY(180deg) translateY(-20px);
+  }
+  75% {
+    transform: scale(0.95) rotateY(-20deg) translateY(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotateY(0deg) translateY(0);
+  }
+}
+
+@keyframes tokenDismissPop {
+  0% {
+    opacity: 1;
+    transform: scale(1) rotateY(0deg);
+  }
+  30% {
+    transform: scale(1.1) rotateY(20deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0) rotateY(-360deg);
+  }
+}

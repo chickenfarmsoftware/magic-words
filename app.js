@@ -17,17 +17,43 @@ class App {
     this.currentAnimal = null;
     this.cooldownTimer = null;
 
-    // Supported animal keywords mapping to their DOM IDs
+    // Supported animal keywords mapping to their internal keys
     this.supportedAnimals = {
-      'cat': 'animal-cat',
-      'kitten': 'animal-cat',
-      'dog': 'animal-dog',
-      'puppy': 'animal-dog',
-      'rabbit': 'animal-rabbit',
-      'bunny': 'animal-rabbit',
-      'dragon': 'animal-dragon',
-      'lion': 'animal-lion',
-      'cow': 'animal-cow'
+      // Primary 3D Images
+      'cat': 'cat', 'kitten': 'cat',
+      'dog': 'dog', 'puppy': 'dog',
+      'rabbit': 'rabbit', 'bunny': 'rabbit',
+      'dragon': 'dragon',
+      'lion': 'lion',
+      'cow': 'cow',
+      
+      // Children's Books Animals (Tokens)
+      'bear': 'bear', 'panda': 'panda', 'koala': 'koala', 'tiger': 'tiger', 'leopard': 'leopard',
+      'cheetah': 'cheetah', 'zebra': 'zebra', 'gorilla': 'gorilla', 'monkey': 'monkey', 'chimpanzee': 'monkey',
+      'elephant': 'elephant', 'hippo': 'hippo', 'hippopotamus': 'hippo', 'rhino': 'rhino', 'rhinoceros': 'rhino',
+      'giraffe': 'giraffe', 'kangaroo': 'kangaroo', 'pig': 'pig', 'piglet': 'pig', 'sheep': 'sheep',
+      'lamb': 'sheep', 'goat': 'goat', 'horse': 'horse', 'foal': 'horse', 'donkey': 'donkey',
+      'deer': 'deer', 'fox': 'fox', 'wolf': 'wolf', 'squirrel': 'squirrel', 'hedgehog': 'hedgehog',
+      'beaver': 'beaver', 'mouse': 'mouse', 'rat': 'mouse', 'frog': 'frog', 'toad': 'frog',
+      'turtle': 'turtle', 'tortoise': 'turtle', 'snake': 'snake', 'crocodile': 'crocodile', 'alligator': 'crocodile',
+      'duck': 'duck', 'duckling': 'duck', 'chicken': 'chicken', 'rooster': 'chicken', 'owl': 'owl',
+      'bird': 'bird', 'parrot': 'parrot', 'eagle': 'eagle', 'penguin': 'penguin', 'whale': 'whale',
+      'dolphin': 'dolphin', 'shark': 'shark', 'octopus': 'octopus', 'crab': 'crab', 'lobster': 'crab',
+      'bee': 'bee', 'butterfly': 'butterfly', 'snail': 'snail', 'dinosaur': 'dinosaur', 'dino': 'dinosaur'
+    };
+
+    // Animal emojis for children's books
+    this.animalEmojis = {
+      'bear': '🐻', 'panda': '🐼', 'koala': '🐨', 'tiger': '🐯', 'leopard': '🐆',
+      'cheetah': '🐆', 'zebra': '🦓', 'gorilla': '🦍', 'monkey': '🐵', 'elephant': '🐘',
+      'hippo': '🦛', 'rhino': '🦏', 'giraffe': '🦒', 'kangaroo': '🦘', 'pig': '🐷',
+      'sheep': '🐑', 'goat': '🐐', 'horse': '🐴', 'donkey': '🫏', 'deer': '🦌',
+      'fox': '🦊', 'wolf': '🐺', 'squirrel': '🐿️', 'hedgehog': '🦔', 'beaver': '🦫',
+      'mouse': '🐭', 'frog': '🐸', 'turtle': '🐢', 'snake': '🐍', 'crocodile': '🐊',
+      'duck': '🦆', 'chicken': '🐔', 'owl': '🦉', 'bird': '🐦', 'parrot': '🦜',
+      'eagle': '🦅', 'penguin': '🐧', 'whale': '🐳', 'dolphin': '🐬', 'shark': '🦈',
+      'octopus': '🐙', 'crab': '🦀', 'bee': '🐝', 'butterfly': '🦋', 'snail': '🐌',
+      'dinosaur': '🦖'
     };
 
     // Cache DOM Elements
@@ -53,6 +79,11 @@ class App {
       'lion': document.getElementById('animal-lion'),
       'cow': document.getElementById('animal-cow')
     };
+
+    // Toy Token Elements
+    this.toyToken = document.getElementById('toy-token');
+    this.tokenEmoji = document.getElementById('token-emoji');
+    this.tokenName = document.getElementById('token-name');
 
     this.initEvents();
   }
@@ -366,15 +397,26 @@ class App {
       this.playPoofSound();
       this.particles.createSummonExplosion(explosionX, explosionY);
 
-      // 5. Reveal animal with bounce pop
+      // 5. Reveal animal or toy token
       const animalEl = this.animalElements[this.currentAnimal];
       if (animalEl) {
-        // Hide all other animal images first just in case
+        // Hide all other animal elements
+        Object.values(this.animalElements).forEach(el => {
+          el.className = "animal-img";
+        });
+        this.toyToken.className = "toy-token"; // hide token
+        animalEl.classList.add('summon-pop');
+      } else {
+        // Token Animal fallback
         Object.values(this.animalElements).forEach(el => {
           el.className = "animal-img";
         });
         
-        animalEl.classList.add('summon-pop');
+        const emoji = this.animalEmojis[this.currentAnimal] || '❓';
+        this.tokenEmoji.innerText = emoji;
+        this.tokenName.innerText = this.currentAnimal;
+        
+        this.toyToken.className = "toy-token summon-pop";
       }
 
       // 6. Turn boy back to front view, hide bubble
@@ -416,21 +458,27 @@ class App {
     if (this.currentAnimal) {
       const animalEl = this.animalElements[this.currentAnimal];
       if (animalEl) {
+        // Primary animal image
         animalEl.classList.remove('summon-pop');
         animalEl.classList.add('dismiss-pop');
-        
-        // Let dismissal animation finish
-        setTimeout(() => {
-          animalEl.classList.remove('dismiss-pop');
-          this.currentAnimal = null;
-          this.state = STATES.RESET;
-          this.transitionTo(STATES.IDLE_WAITING);
-        }, 500);
       } else {
+        // Token animal
+        this.toyToken.classList.remove('summon-pop');
+        this.toyToken.classList.add('dismiss-pop');
+      }
+      
+      // Let dismissal animation finish
+      setTimeout(() => {
+        if (animalEl) {
+          animalEl.classList.remove('dismiss-pop');
+        } else {
+          this.toyToken.classList.remove('dismiss-pop');
+          this.toyToken.className = "toy-token";
+        }
         this.currentAnimal = null;
         this.state = STATES.RESET;
         this.transitionTo(STATES.IDLE_WAITING);
-      }
+      }, 500);
     } else {
       this.state = STATES.RESET;
       this.transitionTo(STATES.IDLE_WAITING);
