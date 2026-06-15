@@ -240,8 +240,7 @@ class App {
         const regex = new RegExp(`\\b${keyword}\\b`, 'i');
         if (regex.test(currentSpeech)) {
           const matchedKey = this.supportedAnimals[keyword];
-          // Get root animal name (e.g. map 'kitten' -> 'cat')
-          const animalName = matchedKey.split('-')[1];
+          const animalName = matchedKey;
           
           this.speechFeedBubble.innerText = `Summoning: ${animalName.toUpperCase()}!`;
           this.speechFeedBubble.classList.add('recognized');
