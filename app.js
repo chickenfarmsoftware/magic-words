@@ -35,7 +35,13 @@ class App {
       'giraffe': 'giraffe',
       'tiger': 'tiger',
       'alligator': 'alligator', 'aligator': 'alligator', 'crocodile': 'alligator',
-      'rhino': 'rhino', 'rhinoceros': 'rhino'
+      'rhino': 'rhino', 'rhinoceros': 'rhino',
+      'toucan': 'toucan', 'tucan': 'toucan', 'two-can': 'toucan', 'twocan': 'toucan',
+      'hippo': 'hippo', 'hippopotamus': 'hippo', 'hipo': 'hippo', 'hepo': 'hippo',
+      'lizard': 'lizard', 'lizardy': 'lizard', 'liz': 'lizard', 'wizado': 'lizard',
+      'duck': 'duck', 'ducky': 'duck', 'quack': 'duck', 'duk': 'duck',
+      'goat': 'goat', 'gote': 'goat', 'got': 'goat', 'billy': 'goat',
+      'turkey': 'turkey', 'turki': 'turkey', 'gobble': 'turkey', 'tukey': 'turkey'
     };
 
     // Cache DOM Elements
@@ -71,7 +77,12 @@ class App {
       'tiger': document.getElementById('animal-tiger'),
       'toucan': document.getElementById('animal-toucan'),
       'alligator': document.getElementById('animal-alligator'),
-      'rhino': document.getElementById('animal-rhino')
+      'rhino': document.getElementById('animal-rhino'),
+      'hippo': document.getElementById('animal-hippo'),
+      'lizard': document.getElementById('animal-lizard'),
+      'duck': document.getElementById('animal-duck'),
+      'goat': document.getElementById('animal-goat'),
+      'turkey': document.getElementById('animal-turkey')
     };
 
     this.initEvents();
@@ -300,7 +311,7 @@ class App {
       // 2. If no exact match, try fuzzy Levenshtein match on individual words
       if (!matchedAnimal) {
         const words = currentSpeech.split(/\s+/);
-        const coreAnimals = ['cat', 'dog', 'rabbit', 'lion', 'dragon', 'cow', 'horse', 'pig', 'bear', 'sheep', 'elephant', 'chicken', 'donkey', 'giraffe', 'tiger', 'toucan', 'alligator', 'rhino'];
+        const coreAnimals = ['cat', 'dog', 'rabbit', 'lion', 'dragon', 'cow', 'horse', 'pig', 'bear', 'sheep', 'elephant', 'chicken', 'donkey', 'giraffe', 'tiger', 'toucan', 'alligator', 'rhino', 'hippo', 'lizard', 'duck', 'goat', 'turkey'];
         
         for (const word of words) {
           if (word.length < 2) continue; // skip single letter noise
