@@ -29,7 +29,13 @@ class App {
       'pig': 'pig', 'piddy': 'pig', 'piggy': 'pig', 'pik': 'pig',
       'bear': 'bear', 'beh': 'bear', 'bare': 'bear', 'behr': 'bear',
       'sheep': 'sheep', 'seep': 'sheep', 'heep': 'sheep', 'shee': 'sheep', 'baa': 'sheep',
-      'elephant': 'elephant', 'elphant': 'elephant', 'efant': 'elephant', 'ellie': 'elephant', 'elpat': 'elephant', 'elph': 'elephant'
+      'elephant': 'elephant', 'elphant': 'elephant', 'efant': 'elephant', 'ellie': 'elephant', 'elpat': 'elephant', 'elph': 'elephant',
+      'chicken': 'chicken', 'chick': 'chicken', 'hen': 'chicken',
+      'donkey': 'donkey',
+      'giraffe': 'giraffe',
+      'tiger': 'tiger',
+      'toucan': 'toucan', 'tucan': 'toucan',
+      'alligator': 'alligator', 'aligator': 'alligator', 'crocodile': 'alligator'
     };
 
     // Cache DOM Elements
@@ -58,7 +64,13 @@ class App {
       'pig': document.getElementById('animal-pig'),
       'bear': document.getElementById('animal-bear'),
       'sheep': document.getElementById('animal-sheep'),
-      'elephant': document.getElementById('animal-elephant')
+      'elephant': document.getElementById('animal-elephant'),
+      'chicken': document.getElementById('animal-chicken'),
+      'donkey': document.getElementById('animal-donkey'),
+      'giraffe': document.getElementById('animal-giraffe'),
+      'tiger': document.getElementById('animal-tiger'),
+      'toucan': document.getElementById('animal-toucan'),
+      'alligator': document.getElementById('animal-alligator')
     };
 
     this.initEvents();
@@ -67,6 +79,45 @@ class App {
   initEvents() {
     this.startBtn.addEventListener('click', () => this.startMagic());
     this.micBtn.addEventListener('click', () => this.toggleListening());
+
+    // Screen Touch / Tap listener to summon a random animal
+    document.addEventListener('pointerdown', (e) => {
+      // Ignore clicks on setup overlay, mic buttons, and start button
+      if (e.target.closest('#mic-btn') || e.target.closest('#setup-overlay') || e.target.closest('#start-btn')) return;
+
+      if (this.state === STATES.IDLE_WAITING) {
+        this.triggerRandomAnimal("Screen Tap: ");
+      }
+    });
+
+    // Keyboard press listener to summon a random animal
+    window.addEventListener('keydown', (e) => {
+      // Ignore if setup overlay is active
+      if (this.setupOverlay && !this.setupOverlay.classList.contains('hidden')) return;
+
+      if (this.state === STATES.IDLE_WAITING) {
+        this.triggerRandomAnimal(`Key [${e.key.toUpperCase()}]: `);
+      }
+    });
+  }
+
+  // Helper to summon a random animal from the active list
+  triggerRandomAnimal(prefixText = "Magic Summon: ") {
+    if (this.state !== STATES.IDLE_WAITING) return;
+
+    const activeAnimals = Object.keys(this.animalElements);
+    const randomIndex = Math.floor(Math.random() * activeAnimals.length);
+    const randomAnimal = activeAnimals[randomIndex];
+
+    this.currentAnimal = randomAnimal;
+    this.transitionTo(STATES.HEARD);
+
+    this.speechFeedBubble.classList.add('recognized');
+    this.speechFeedBubble.innerText = `${prefixText}${randomAnimal.toUpperCase()}!`;
+
+    setTimeout(() => {
+      this.transitionTo(STATES.SUMMONING);
+    }, 400);
   }
 
   // Calculate Levenshtein distance between two strings
@@ -248,7 +299,7 @@ class App {
       // 2. If no exact match, try fuzzy Levenshtein match on individual words
       if (!matchedAnimal) {
         const words = currentSpeech.split(/\s+/);
-        const coreAnimals = ['cat', 'dog', 'rabbit', 'lion', 'dragon', 'cow', 'horse', 'pig', 'bear', 'sheep', 'elephant'];
+        const coreAnimals = ['cat', 'dog', 'rabbit', 'lion', 'dragon', 'cow', 'horse', 'pig', 'bear', 'sheep', 'elephant', 'chicken', 'donkey', 'giraffe', 'tiger', 'toucan', 'alligator'];
         
         for (const word of words) {
           if (word.length < 2) continue; // skip single letter noise
@@ -258,7 +309,7 @@ class App {
             
             // Set threshold based on length
             let threshold = 1;
-            if (target.length >= 6) threshold = 2; // rabbit, dragon, elephant can have distance of 2
+            if (target.length >= 6) threshold = 2; // longer words can have distance of 2
             
             if (distance <= threshold) {
               matchedAnimal = target;
@@ -269,7 +320,7 @@ class App {
         }
       }
 
-      // 3. If matched, update bubble and trigger summon, otherwise ignore completely
+      // 3. If matched, update bubble and trigger summon, otherwise trigger a random animal!
       if (matchedAnimal) {
         this.speechFeedBubble.classList.add('recognized');
         if (isExact) {
@@ -278,6 +329,9 @@ class App {
           this.speechFeedBubble.innerText = `Best Guess: ${matchedAnimal.toUpperCase()}!`;
         }
         this.handleAnimalTrigger(matchedAnimal);
+      } else {
+        // Did not recognize, trigger random animal for playfulness
+        this.triggerRandomAnimal("Not sure... Summoning: ");
       }
     };
 
