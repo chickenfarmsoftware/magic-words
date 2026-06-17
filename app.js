@@ -85,7 +85,46 @@ class App {
       'turkey': document.getElementById('animal-turkey')
     };
 
+    // List of core animal keys
+    this.coreAnimals = [
+      'cat', 'dog', 'rabbit', 'dragon', 'lion', 'cow', 'horse', 'pig', 'bear', 'sheep', 
+      'elephant', 'chicken', 'donkey', 'giraffe', 'tiger', 'toucan', 'alligator', 'rhino', 
+      'hippo', 'lizard', 'duck', 'goat', 'turkey'
+    ];
+
+    // Pre-calculate normalized toddler phonetic keys for all core animals
+    this.normalizedCoreAnimals = {};
+    this.coreAnimals.forEach(animal => {
+      this.normalizedCoreAnimals[animal] = this.normalizeToddlerSpeech(animal);
+    });
+
     this.initEvents();
+  }
+
+  // Normalize speech to match toddler pronunciation patterns
+  normalizeToddlerSpeech(word) {
+    let w = word.toLowerCase().trim();
+    if (!w) return "";
+
+    // 1. Map stops and fricatives: 'ph' / 'f' -> 'p'
+    w = w.replace(/ph/g, 'p').replace(/f/g, 'p');
+
+    // 2. Map 'th' / 'sh' / 'ch' -> 't' or 's'
+    w = w.replace(/th/g, 't').replace(/sh/g, 's').replace(/ch/g, 't');
+
+    // 3. Gliding & liquid normalization: map starting/middle 'w', 'y', 'l', 'r' to 'r'
+    w = w.replace(/l/g, 'r').replace(/w/g, 'r').replace(/y/g, 'r');
+
+    // 4. Fronting: map back sounds ('c', 'k', 'q', 'g') and front stops ('t', 'd') to single category 'k'
+    w = w.replace(/c/g, 'k').replace(/q/g, 'k').replace(/g/g, 'k').replace(/t/g, 'k').replace(/d/g, 'k');
+
+    // 5. Simplify double letters
+    w = w.replace(/(.)\1+/g, '$1');
+
+    // 6. Simplify vowels: map all vowels to 'a'
+    w = w.replace(/[aeiou]/g, 'a');
+
+    return w;
   }
 
   initEvents() {
@@ -126,6 +165,7 @@ class App {
 
     this.speechFeedBubble.classList.add('recognized');
     this.speechFeedBubble.innerText = `${prefixText}${randomAnimal.toUpperCase()}!`;
+    this.speechFeed.classList.add('visible');
 
     setTimeout(() => {
       this.transitionTo(STATES.SUMMONING);
@@ -295,64 +335,62 @@ class App {
       const currentSpeech = (finalTranscript || interimTranscript).toLowerCase().trim();
       if (!currentSpeech) return;
 
-      // 1. Check for exact match or toddler phonetic match
+      const words = currentSpeech.split(/\s+/);
       let matchedAnimal = null;
       let isExact = false;
 
-      for (const keyword in this.supportedAnimals) {
-        const regex = new RegExp(`\\b${keyword}\\b`, 'i');
-        if (regex.test(currentSpeech)) {
-          matchedAnimal = this.supportedAnimals[keyword];
+      for (const word of words) {
+        if (word.length < 2) continue; // skip single letter noise
+
+        // 1. Direct exact or explicit toddler map check
+        if (this.supportedAnimals[word]) {
+          matchedAnimal = this.supportedAnimals[word];
           isExact = true;
           break;
         }
-      }
 
-      // 2. If no exact match, try fuzzy Levenshtein match on individual words
-      if (!matchedAnimal) {
-        const words = currentSpeech.split(/\s+/);
-        const coreAnimals = ['cat', 'dog', 'rabbit', 'lion', 'dragon', 'cow', 'horse', 'pig', 'bear', 'sheep', 'elephant', 'chicken', 'donkey', 'giraffe', 'tiger', 'toucan', 'alligator', 'rhino', 'hippo', 'lizard', 'duck', 'goat', 'turkey'];
-        
-        for (const word of words) {
-          if (word.length < 2) continue; // skip single letter noise
-          
-          for (const target of coreAnimals) {
-            const distance = this.levenshtein(word, target);
-            
-            // Set threshold based on length
-            let threshold = 1;
-            if (target.length >= 6) threshold = 2; // longer words can have distance of 2
-            
-            if (distance <= threshold) {
-              matchedAnimal = target;
-              break;
-            }
+        // 2. Custom toddler phonetic normalization check
+        const normalizedWord = this.normalizeToddlerSpeech(word);
+        if (!normalizedWord || normalizedWord.length < 2) continue;
+
+        for (const target of this.coreAnimals) {
+          const normalizedTarget = this.normalizedCoreAnimals[target];
+
+          // Exact phonetic match
+          if (normalizedWord === normalizedTarget) {
+            matchedAnimal = target;
+            break;
           }
-          if (matchedAnimal) break;
+
+          // Substring phonetic match (e.g. "gator" -> "alligator", "hippo" -> "hippopotamus")
+          if (normalizedWord.length >= 3 && (normalizedTarget.includes(normalizedWord) || normalizedWord.includes(normalizedTarget))) {
+            matchedAnimal = target;
+            break;
+          }
+
+          // Levenshtein phonetic distance
+          const distance = this.levenshtein(normalizedWord, normalizedTarget);
+          let threshold = 1;
+          if (normalizedTarget.length >= 6) threshold = 2;
+
+          if (distance <= threshold) {
+            matchedAnimal = target;
+            break;
+          }
         }
+        if (matchedAnimal) break;
       }
 
-      // 3. If matched, update bubble and trigger summon, otherwise show heard phrase and ignore
+      // 3. If matched, update bubble, show overlay, and trigger summon; otherwise remain silent
       if (matchedAnimal) {
-        if (this.clearFeedTimeout) clearTimeout(this.clearFeedTimeout);
         this.speechFeedBubble.classList.add('recognized');
         if (isExact) {
           this.speechFeedBubble.innerText = `Summoning: ${matchedAnimal.toUpperCase()}!`;
         } else {
           this.speechFeedBubble.innerText = `Best Guess: ${matchedAnimal.toUpperCase()}!`;
         }
+        this.speechFeed.classList.add('visible'); // Show speech feed on match
         this.handleAnimalTrigger(matchedAnimal);
-      } else {
-        // Did not recognize, show what was heard but do not summon
-        this.speechFeedBubble.innerText = `Heard: "${currentSpeech}"`;
-        this.speechFeedBubble.classList.remove('recognized');
-        
-        if (this.clearFeedTimeout) clearTimeout(this.clearFeedTimeout);
-        this.clearFeedTimeout = setTimeout(() => {
-          if (this.state === STATES.IDLE_WAITING) {
-            this.speechFeedBubble.innerText = "Say an animal name...";
-          }
-        }, 2000);
       }
     };
 
@@ -405,10 +443,12 @@ class App {
       this.stopListening();
       this.updateHUDState(STATES.COOLDOWN, "Muted");
       this.speechFeedBubble.innerText = "Paused listening. Tap indicator to resume.";
+      this.speechFeed.classList.add('visible'); // Show pause status
     } else {
       this.startListening();
       this.updateHUDState(STATES.IDLE_WAITING, "Listening...");
-      this.speechFeedBubble.innerText = "Say an animal name...";
+      this.speechFeedBubble.innerText = "";
+      this.speechFeed.classList.remove('visible'); // Hide when listening resumes
     }
   }
 
@@ -420,8 +460,9 @@ class App {
     switch (nextState) {
       case STATES.IDLE_WAITING:
         this.updateHUDState(STATES.IDLE_WAITING, "Listening...");
-        this.speechFeedBubble.innerText = "Say an animal name...";
+        this.speechFeedBubble.innerText = "";
         this.speechFeedBubble.classList.remove('recognized');
+        this.speechFeed.classList.remove('visible'); // Hide speech feed
         this.boyFront.classList.add('active');
         this.boyAction.classList.remove('active');
         this.speechBubble.classList.remove('active');
